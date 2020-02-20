@@ -37,7 +37,7 @@ The following is a example for the config.json :
 {
   "user": "your_user_name",
   "password": "password",
-  "domain": "example.com, second.com",
+  "domain": ["example.com", "second.com"],
   "refresh_time": "10"
 }
 ```
