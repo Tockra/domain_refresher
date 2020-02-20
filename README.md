@@ -38,7 +38,7 @@ The following is a example for the config.json :
   "user": "your_user_name",
   "password": "password",
   "domain": ["example.com", "second.com"],
-  "refresh_time": "10"
+  "refresh_time": 10
 }
 ```
 This config file would update the domain example.com and second.com every 10 minutes. If the login information is wrong or you don't own the given domains this tool will crash.
