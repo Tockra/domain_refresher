@@ -42,3 +42,6 @@ The following is a example for the config.json :
 }
 ```
 This config file would update the domain example.com and second.com every 10 minutes. If the login information is wrong or you don't own the given domains this tool will crash.
+
+# Known Bugs
+If you add a wrong domain to config.json, you get the console message "Problem with host login!" instead of "Wrong domain information".
