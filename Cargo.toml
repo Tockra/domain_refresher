@@ -1,6 +1,6 @@
 [package]
 name = "domain_refresher"
-version = "0.1.0"
+version = "1.0.0"
 authors = ["Tim <tim.tannert@tu-dortmund.de>"]
 edition = "2018"
 
@@ -8,4 +8,7 @@ edition = "2018"
 
 [dependencies]
 hoster_tools = { git = "https://github.com/Tockra/hoster_tools.git"}
+serde = "1.0.104"
 serde_json = "1.0.48"
+reqwest = {version= "0.10.1", features=["blocking","cookies"] } 
+chrono = "0.4.10"

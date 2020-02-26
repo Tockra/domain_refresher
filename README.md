@@ -16,7 +16,7 @@ Now enter domain_refresher/ in your terminal and run
 cargo build --release
 ```
 You'll find the binary in target/release/
-If you want to use the binary, you need to place your config.yml in the same folder like the binary!
+If you want to use the binary, you need to place your config.json in the same folder like the binary!
 
 # Docker
 You can use the Dockerfile, too. If you have installed docker, you don't need to install rust. You only need to run: 
@@ -37,7 +37,7 @@ The following is a example for the config.json :
 {
   "user": "your_user_name",
   "password": "password",
-  "domain": ["example.com", "second.com"],
+  "domains": ["example.com", "second.com"],
   "refresh_time": 10
 }
 ```
