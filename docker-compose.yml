@@ -4,4 +4,4 @@ services:
       build: .
       restart: always
       volumes:
-          - config.json:/home/refresher/target/release/config.json
+          - ./config.json:/home/refresher/target/release/config.json
