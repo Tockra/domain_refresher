@@ -1,10 +1,12 @@
 extern crate chrono;
+extern crate regex;
+
 use chrono::Utc;
+use regex::Regex;
 
 use std::fs::File;
 use std::io::BufReader;
 use serde::Deserialize;
-
 #[derive(Debug)]
 enum InternalError {
     URL(String),
@@ -46,8 +48,10 @@ fn frequently_check(interval: u32,username: String, password: String, domains: V
         for domain in domains.iter() {
             let target_ip = get_current_ip(domain)?;
             let own_ip = get_own_ip();
-            if !own_ip.contains(target_ip.as_str()) {
-                dns_manager.add_dns_record(domain, "", "A", &own_ip).map_err(|_|InternalError::LOGIN)?;
+            let re_ip = Regex::new(r"^\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}$").unwrap();
+            if !own_ip.contains(target_ip.as_str()) && re_ip.is_match(&own_ip) {
+                // temporary deactivated until it works for one month TODO
+                //dns_manager.add_dns_record(domain, "", "A", &own_ip).map_err(|_|InternalError::LOGIN)?;
                 println!("{} Domain {} shows on {} but the current ip address is {}. Updated!",Utc::now().format("[%F %T]"), domain, target_ip, own_ip);
             }
         }
@@ -81,8 +85,14 @@ fn parse_config(file_path: String) -> std::io::Result<Config> {
 }
 
 fn get_own_ip() -> String {
-    let resp = reqwest::blocking::get("https://api.ipify.org/").unwrap().text().unwrap();
-    resp
+    let resp = reqwest::blocking::get("https://api.ipify.org/").unwrap();
+
+    //TODO
+    match resp.status() {
+        reqwest::StatusCode::OK => (),
+        _ => println!("Error_code"),
+    };
+    resp.text().unwrap()
 }
 
 fn get_current_ip(domain: &String) -> Result<String,InternalError> {

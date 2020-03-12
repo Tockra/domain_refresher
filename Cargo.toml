@@ -12,3 +12,4 @@ serde = "1.0.104"
 serde_json = "1.0.48"
 reqwest = {version= "0.10.1", features=["blocking","cookies"] } 
 chrono = "0.4.10"
+regex = "1.3.4"
