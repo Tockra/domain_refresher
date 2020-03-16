@@ -85,7 +85,10 @@ fn parse_config(file_path: String) -> std::io::Result<Config> {
 }
 
 fn get_own_ip() -> String {
-    let resp = reqwest::blocking::get("https://api.ipify.org/").unwrap();
+    let resp = match reqwest::blocking::get("https://api.ipify.org/") {
+        Ok(resp) => resp,
+        Err(e) => panic!("Error (timeout?): {}",e),
+    };
 
     //TODO
     match resp.status() {
