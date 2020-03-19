@@ -1,6 +1,6 @@
 FROM rust:latest
 
-COPY ./* /home/refresher/
+COPY ./ /home/refresher/
 WORKDIR /home/refresher/
 
 RUN cargo build --release
