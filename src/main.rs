@@ -44,14 +44,19 @@ fn frequently_check(interval: u32,username: String, password: String, domains: V
                     };
 
     println!("{} Startup tool.",Utc::now().format("[%F %T]"));
+    let mut last_ip = String::from("127.0.0.1");
     loop {
         for domain in domains.iter() {
             let target_ip = get_current_ip(domain)?;
             let own_ip = get_own_ip();
+            if own_ip != "" {
+                last_ip = own_ip.clone();
+            }
+
             let re_ip = Regex::new(r"^\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}$").unwrap();
-            if !own_ip.contains(target_ip.as_str()) && re_ip.is_match(&own_ip) {
+            if !last_ip.contains(target_ip.as_str()) && re_ip.is_match(&last_ip) {
                 // temporary deactivated until it works for one month TODO
-                //dns_manager.add_dns_record(domain, "", "A", &own_ip).map_err(|_|InternalError::LOGIN)?;
+                //dns_manager.add_dns_record(domain, "", "A", &last_ip).map_err(|_|InternalError::LOGIN)?;
                 println!("{} Domain {} shows on {} but the current ip address is {}. Updated!",Utc::now().format("[%F %T]"), domain, target_ip, own_ip);
             }
         }
@@ -85,8 +90,10 @@ fn parse_config(file_path: String) -> std::io::Result<Config> {
 }
 
 fn get_own_ip() -> String {
-    let resp = match reqwest::blocking::get("https://api.ipify.org/") {
+    let resp = match reqwest::blocking::Client::builder().timeout(std::time::Duration::from_secs(10)).build().unwrap().get("https://api.ipify.org/").send() {
         Ok(resp) => resp,
+        // Hier einen leeren String "" zurückgeben. Dann wird einfach als eigene IP die letzte eigene IP verwendet. Dann einmal 
+        // Counter implementieren, um zu verfolgen, ob das oft geschieht oder vernachlässigbar selten bei timeout 10 secs.
         Err(e) => panic!("Error (timeout?): {}",e),
     };
 
