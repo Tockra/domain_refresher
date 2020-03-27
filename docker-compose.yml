@@ -5,3 +5,4 @@ services:
       restart: always
       volumes:
           - ./config.json:/home/refresher/target/release/config.json
+          - /etc/timezone:/etc/timezone

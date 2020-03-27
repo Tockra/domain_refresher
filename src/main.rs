@@ -90,7 +90,7 @@ fn parse_config(file_path: String) -> std::io::Result<Config> {
 }
 
 fn get_own_ip() -> String {
-    let resp = match reqwest::blocking::Client::builder().timeout(std::time::Duration::from_secs(10)).build().unwrap().get("https://api.ipify.org/").send() {
+    let resp = match reqwest::blocking::Client::builder().timeout(std::time::Duration::from_secs(10)).build().unwrap().get("ifconfig.me").send() {
         Ok(resp) => resp,
         // Hier einen leeren String "" zurückgeben. Dann wird einfach als eigene IP die letzte eigene IP verwendet. Dann einmal 
         // Counter implementieren, um zu verfolgen, ob das oft geschieht oder vernachlässigbar selten bei timeout 10 secs.
