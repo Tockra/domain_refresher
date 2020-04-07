@@ -97,7 +97,7 @@ fn parse_config(file_path: String) -> std::io::Result<Config> {
 }
 
 fn get_own_ip() -> String {
-    let resp = match reqwest::blocking::Client::builder().timeout(std::time::Duration::from_secs(10)).build().unwrap().get("ifconfig.me").send() {
+    let resp = match reqwest::blocking::Client::builder().timeout(std::time::Duration::from_secs(10)).build().unwrap().get("https://ifconfig.me").send() {
         Ok(resp) => resp,
 
         Err(_) => {
