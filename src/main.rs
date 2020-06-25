@@ -7,6 +7,8 @@ use regex::Regex;
 use std::fs::File;
 use std::io::BufReader;
 use serde::Deserialize;
+use std::net::IpAddr;
+
 #[derive(Debug)]
 enum InternalError {
     URL(String),
@@ -14,7 +16,9 @@ enum InternalError {
 }
 use std::net::ToSocketAddrs;
 
-fn main() {
+
+#[tokio::main]
+async fn main() {
 
     // computes the path of the config file
     let program_path = std::env::args().nth(0).unwrap();
@@ -28,7 +32,7 @@ fn main() {
     };
 
     // start to check frequently the given domains. Returns if something runs wrong
-    match frequently_check(config.refresh_time, config.user,config.password,config.domains) {
+    match frequently_check(config.refresh_time, config.user,config.password,config.domains).await {
         Ok(()) => println!("{} Exited Tool", Utc::now().format("[%F %T]")),
         Err(InternalError::LOGIN) => println!("{} Problem with host login!\n Terminated", Utc::now().format("[%F %T]")),
         Err(InternalError::URL(domain)) => println!("{} Problem with set domains. Check if you are the owner of the domain {}!\n Terminated", Utc::now().format("[%F %T]"), domain),
@@ -37,7 +41,7 @@ fn main() {
 
 /// Checks in `interval` (minutes) the domains `domain`. 
 /// If the current ip don't show on the domains id the record will updated
-fn frequently_check(interval: u32,username: String, password: String, domains: Vec<String>) -> Result<(),InternalError> {
+async fn frequently_check(interval: u32,username: String, password: String, domains: Vec<String>) -> Result<(),InternalError> {
     let dns_manager = match hoster_tools::hosters::onyxhosting::DNSManager::new(username.as_str(), password.as_str()) {
                         Err(_) => { return Err(InternalError::LOGIN) },
                         Ok(manager) => manager,
@@ -49,7 +53,7 @@ fn frequently_check(interval: u32,username: String, password: String, domains: V
     loop {
         for domain in domains.iter() {
             let target_ip = get_current_ip(domain)?;
-            let own_ip = get_own_ip();
+            let own_ip = get_own_ip().await;
             if own_ip != "" {
                 last_ip = own_ip;
             } else {
@@ -96,24 +100,13 @@ fn parse_config(file_path: String) -> std::io::Result<Config> {
     Ok(config)
 }
 
-fn get_own_ip() -> String {
-    let resp = match reqwest::blocking::Client::builder().timeout(std::time::Duration::from_secs(10)).build().unwrap().get("https://ifconfig.me").send() {
-        Ok(resp) => resp,
-
-        Err(_) => {
-            println!("{} Getting own ip timed out. Use last own ip.",Utc::now().format("[%F %T]"));
-            return String::from("");
-        },
+async fn get_own_ip() -> String {
+    let result = external_ip::get_ip();
+    let value : Option<IpAddr> = result.await;
+    return match value {
+        Some(x) => x.to_string(),
+        None => String::from("")
     };
-
-    match resp.status() {
-        reqwest::StatusCode::OK => (),
-        _ => {
-            println!("{} Getting own ip failed because of bad response. Use last own ip.",Utc::now().format("[%F %T]"));
-            return String::from("");
-        },
-    };
-    resp.text().unwrap()
 }
 
 fn get_current_ip(domain: &String) -> Result<String,InternalError> {
