@@ -10,8 +10,8 @@ edition = "2018"
 hoster_tools = { git = "https://github.com/Tockra/hoster_tools.git"}
 serde = "1.0.104"
 serde_json = "1.0.48"
-reqwest = {version= "0.10.1", features=["blocking","cookies"] } 
-chrono = "0.4.10"
+reqwest = {version= "0.11.14", features=["blocking","cookies"] } 
+chrono = {git="https://github.com/chronotope/chrono.git", branch="main"}
 regex = "1.3.4"
-external-ip =  {version= "2.0.0", features=["igd"] } 
-tokio = {version= "0.2.21", features=["full"] } 
+external-ip =  {version= "4.2.0", features=["igd"] } 
+tokio = {version= "1.25.0", features=["full"] } 

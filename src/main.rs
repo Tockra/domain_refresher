@@ -42,7 +42,7 @@ async fn main() {
 /// Checks in `interval` (minutes) the domains `domain`. 
 /// If the current ip don't show on the domains id the record will updated
 async fn frequently_check(interval: u32,username: String, password: String, domains: Vec<String>) -> Result<(),InternalError> {
-    let dns_manager = match hoster_tools::hosters::onyxhosting::DNSManager::new(username.as_str(), password.as_str()) {
+    let _dns_manager = match hoster_tools::hosters::onyxhosting::DNSManager::new(username.as_str(), password.as_str()) {
                         Err(_) => { return Err(InternalError::LOGIN) },
                         Ok(manager) => manager,
                     };
